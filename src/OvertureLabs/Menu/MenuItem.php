@@ -12,7 +12,7 @@ class MenuItem implements MenuItemInterface
 
     protected $htmlOptions;
 
-    protected $childMenuItems = [];
+    protected $childMenuItems = array();
 
     /**
      * Create a new menu builder instance.
@@ -182,7 +182,7 @@ class MenuItem implements MenuItemInterface
 
     public function toArray()
     {
-        $childMenuItems = [];
+        $childMenuItems = array();
 
         foreach ($this->childMenuItems as $title => $childMenuItem) {
             $childMenuItems[$title] = $childMenuItem->toArray();
@@ -204,6 +204,6 @@ class MenuItem implements MenuItemInterface
 
     public function __toString()
     {
-        // return $this->render();
+        return $this->render();
     }
 }

@@ -19,7 +19,7 @@ class MenuBuilder implements MenuBuilderInterface
      */
     protected $url;
 
-    protected $menus = [];
+    protected $menus = array();
 
     public function __construct(HtmlBuilder $html, UrlGenerator $url)
     {
