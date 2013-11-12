@@ -3,7 +3,7 @@
 use Illuminate\Html\HtmlBuilder;
 use Illuminate\Routing\UrlGenerator;
 
-class Menu implements MenuInterface
+class MenuBuilder implements MenuBuilderInterface
 {
     /**
      * The HTML builder instance.
@@ -29,20 +29,34 @@ class Menu implements MenuInterface
         /**
          * Initialize the default menu
          */
-        $this->menus['default'] = new MenuItem($this->html, $this->url);
+        $this->menus['default'] = new MenuItem($this);
     }
 
     public function get($menuName = 'default')
     {
         if (!array_key_exists($menuName, $this->menus)) {
-            $this->menus[$menuName] = new MenuItem($this->html, $this->url);
+            $this->menus[$menuName] = new MenuItem($this);
         }
 
         return $this->menus[$menuName];
     }
 
-    public function item()
+    public function subMenu()
     {
-        return new MenuItem($this->html, $this->url);
+        return new MenuItem($this);
+    }
+
+    public function getCurrentUrl()
+    {
+        return $this->url->current();
+    }
+
+    public function getHtmlAttributes(array $options)
+    {
+        if (!empty($options)) {
+            return $options = $this->html->attributes($options);
+        } else {
+            return '';
+        }
     }
 }

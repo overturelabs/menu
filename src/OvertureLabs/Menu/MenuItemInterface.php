@@ -1,60 +1,56 @@
 <?php namespace OvertureLabs\Menu;
 
-use Illuminate\Html\HtmlBuilder;
-use Illuminate\Routing\UrlGenerator;
-
 interface MenuItemInterface
 {
-    const ROOT = 'menu';
-    const TITLE = 'title';
-    const LINK = 'link';
-    const SUBMENU_TITLE = 'submenu_title';
-    const SUBMENU_LINK = 'submenu_link';
-
     /**
-     * Create a new menu item instance.
-     *
-     * @param  \Illuminate\Routing\UrlGenerator  $url
-     * @param  \Illuminate\Html\HtmlBuilder  $html
-     * @return void
+     * [__construct description]
+     * @param MenuBuilder $menuBuilder [description]
+     * @param [type]      $title       [description]
+     * @param [type]      $url         [description]
      */
-    public function __construct(HtmlBuilder $html, UrlGenerator $url);
+    public function __construct(MenuBuilder $menuBuilder, $title = null, $url = null);
 
     /**
      * [addLink description]
-     * @param [type] $title [description]
-     * @param [type] $url   [description]
+     * @param [type] $title       [description]
+     * @param [type] $url         [description]
+     * @param array  $htmlOptions [description]
      */
-    public function addLink($title, $url);
+    public function addLink($title, $url, $htmlOptions = array());
 
     /**
      * [addLinkIf description]
-     * @param [type] $title     [description]
-     * @param [type] $url       [description]
-     * @param [type] $condition [description]
+     * @param [type] $title       [description]
+     * @param [type] $url         [description]
+     * @param [type] $condition   [description]
+     * @param array  $htmlOptions [description]
      */
-    public function addLinkIf($title, $url, $condition);
+    public function addLinkIf($title, $url, $condition, $htmlOptions = array());
 
     /**
-     * [addRoute description]
-     * @param [type] $title [description]
-     * @param [type] $route [description]
+     * [addSubMenu description]
+     * @param [type]            $title       [description]
+     * @param [type]            $url         [description]
+     * @param MenuItemInterface $subMenu     [description]
+     * @param array             $htmlOptions [description]
      */
-    public function addRoute($title, $route);
+    public function addSubMenu($title, $url, MenuItemInterface $subMenu, $htmlOptions = array());
 
     /**
-     * [addRouteIf description]
-     * @param [type] $title     [description]
-     * @param [type] $route     [description]
-     * @param [type] $condition [description]
+     * [addSubMenuIf description]
+     * @param [type]            $title       [description]
+     * @param [type]            $url         [description]
+     * @param MenuItemInterface $subMenu     [description]
+     * @param [type]            $condition   [description]
+     * @param array             $htmlOptions [description]
      */
-    public function addRouteIf($title, $route, $condition);
+    public function addSubMenuIf($title, $url, MenuItemInterface $subMenu, $condition, $htmlOptions = array());
 
     /**
      * [attachSubMenu description]
      * @param  [type]            $namespace [description]
      * @param  MenuItemInterface $subMenu   [description]
-     * @return [type]                       [description]
+     * @return [type]            [description]
      */
     public function attachSubMenu($namespace, MenuItemInterface $subMenu);
 
@@ -63,16 +59,22 @@ interface MenuItemInterface
      * @param  [type]            $namespace [description]
      * @param  MenuItemInterface $subMenu   [description]
      * @param  [type]            $condition [description]
-     * @return [type]                       [description]
+     * @return [type]            [description]
      */
     public function attachSubMenuIf($namespace, MenuItemInterface $subMenu, $condition);
 
     /**
      * [getMenuItem description]
      * @param  [type] $namespace [description]
-     * @return [type]            [description]
+     * @return [type] [description]
      */
     public function getMenuItem($namespace);
+
+    /**
+     * Renders menu item in HTML.
+     * @return [type] [description]
+     */
+    public function render();
 
     /**
      * [toArray description]
@@ -83,7 +85,13 @@ interface MenuItemInterface
     /**
      * [toJson description]
      * @param  integer $options [description]
-     * @return [type]           [description]
+     * @return [type]  [description]
      */
     public function toJson($options = 0);
+
+    /**
+     * __toString() calls render().
+     * @return string Returns rendered menu.
+     */
+    public function __toString();
 }

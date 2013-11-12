@@ -3,7 +3,7 @@
 use Illuminate\Html\HtmlBuilder;
 use Illuminate\Routing\UrlGenerator;
 
-interface MenuInterface
+interface MenuBuilderInterface
 {
     const ROOT = 'menu';
     const TITLE = 'title';
@@ -21,15 +21,22 @@ interface MenuInterface
     public function __construct(HtmlBuilder $html, UrlGenerator $url);
 
     /**
-     * [get description]
-     * @param  [type] $menuName [description]
-     * @return OvertureLabs\Menu\MenuInterface            [description]
+     * Gets the menu item defined by the provided menu name.
+     * If menu item doesn't exist, the menu builder creates
+     * the menu item and returns it.
+     *
+     * @param  string $menuName
+     * @return OvertureLabs\Menu\MenuItem
      */
-    public function get($menuName);
+
+    public function get($menuName = 'default');
 
     /**
-     * [item description]
-     * @return [type] [description]
+     * Returns a new MenuItem for creating sub-menus.
+     *
+     * @return OvertureLabs\Menu\MenuItem
      */
-    public function item();
+    public function subMenu();
+
+    public function getCurrentUrl();
 }
