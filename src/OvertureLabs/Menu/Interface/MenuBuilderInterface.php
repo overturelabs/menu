@@ -21,28 +21,34 @@ interface MenuBuilderInterface
      * the menu item and returns it.
      *
      * @param  string $menuName
-     * @return OvertureLabs\Menu\MenuItem
+     * @return OvertureLabs\Menu\MenuItemInterface
      */
     public function get($menuName = 'default');
 
     /**
      * Make menu item with the provided menu name.
-     * @param  string $menuName [description]
-     * @param  array  $options  [description]
-     * @return [type]           [description]
+     * @param  string $menuName
+     * @param  array  $options
+     * @return OvertureLabs\Menu\MenuItemInterface
      */
     public function make($menuName = 'default', $options = array());
 
     /**
      * Returns a new MenuItem for creating sub-menus.
      *
-     * @return OvertureLabs\Menu\MenuItem
+     * @return OvertureLabs\Menu\MenuItemInterface
      */
     public function subMenu();
 
+    /**
+     * Get current URL.
+     * @return string
+     */
     public function getCurrentUrl();
 
-    public function renderAttributes(array $options);
-
+    /**
+     * Get the default rendering engine specified by the config file.
+     * @return \OvertureLabs\Menu\MenuRendererInterface
+     */
     public function getDefaultRenderer();
 }

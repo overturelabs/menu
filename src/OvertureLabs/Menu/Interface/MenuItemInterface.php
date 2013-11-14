@@ -3,46 +3,42 @@
 interface MenuItemInterface
 {
     /**
-     * [__construct description]
+     * Constructs the menu item.
      * @param MenuBuilderInterface $menuBuilder
-     * @param [type]               $title
-     * @param [type]               $url
+     * @param string               $title
+     * @param array                $attributes
      */
     public function __construct(MenuBuilderInterface $menuBuilder, $title = null, $attributes = array());
 
     /**
-     * [addLink description]
-     * @param [type] $title
+     * Adds a link to current menu node.
+     * @param string $title
      * @param array  $attributes
-     * @param [type] $priority
      */
     public function addLink($title, $attributes = array());
 
     /**
-     * [addLinkIf description]
-     * @param [type] $title
-     * @param [type] $condition
-     * @param array  $attributes
-     * @param [type] $priority
+     * Adds a link to current menu node if condition is true.
+     * @param string            $title
+     * @param boolean|callable  $condition
+     * @param array             $attributes
      */
     public function addLinkIf($title, $condition, $attributes = array());
 
     /**
-     * [addSubMenu description]
-     * @param [type]            $title
+     * Adds a sub menu to current menu node.
+     * @param string            $title
      * @param MenuItemInterface $subMenu
      * @param array             $attributes
-     * @param [type] $priority
      */
     public function addSubMenu($title, MenuItemInterface $subMenu, $attributes = array());
 
     /**
-     * [addSubMenuIf description]
-     * @param [type]            $title
+     * Adds a sub menu to current menu node if condition is true.
+     * @param string            $title
      * @param MenuItemInterface $subMenu
-     * @param [type]            $condition
+     * @param boolean|callable  $condition
      * @param array             $attributes
-     * @param [type] $priority
      */
     public function addSubMenuIf($title, MenuItemInterface $subMenu, $condition, $attributes = array());
 
@@ -71,7 +67,7 @@ interface MenuItemInterface
     // public function getMenuItem($namespace);
 
     /**
-     * Get all the menu items in this menu item node.
+     * Get all the child menu items in this menu item node.
      * @return array
      */
     public function getMenuItems();
@@ -112,8 +108,8 @@ interface MenuItemInterface
 
     /**
      * Renders the menu item with the provided renderer.
-     * @param  MenuRendererInterface $menuRenderer [description]
-     * @return [type]                              [description]
+     * @param  MenuRendererInterface $menuRenderer
+     * @return string
      */
     public function render(MenuRendererInterface $menuRenderer);
 
