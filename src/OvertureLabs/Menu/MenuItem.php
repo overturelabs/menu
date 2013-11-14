@@ -6,11 +6,13 @@ class MenuItem implements MenuItemInterface
 {
     protected $menuBuilder;
 
-    protected $title;
+    protected $title = null;
 
-    protected $url;
+    protected $url = '#';
 
-    protected $htmlOptions;
+    protected $icon = null;
+
+    protected $priority = 0;
 
     protected $childMenuItems = array();
 
@@ -18,32 +20,58 @@ class MenuItem implements MenuItemInterface
      * Create a new menu builder instance.
      * @return void
      */
-    public function __construct(MenuBuilder $menuBuilder, $title = null, $url = null, $htmlOptions = array())
+    public function __construct(MenuBuilderInterface $menuBuilder, $title = null, $attributes = array())
     {
         $this->menuBuilder = $menuBuilder;
-        $this->title = $title;
-        $this->url = $url;
-        $this->htmlOptions = $htmlOptions;
-    }
+        $this->title = trim($title);
 
-    public function addLink($title, $url, $htmlOptions = array())
-    {
-        $title = trim($title);
-        $url = trim($url);
+        $url = $this->getUrlFromAttributes($attributes);
 
-        if ($url !== '#') {
-            $url = filter_var($url, FILTER_SANITIZE_URL);
-
-            if (!filter_var($url, FILTER_VALIDATE_URL)) {
-                /**
-                 * @todo Change to custom exception class
-                 */
-                throw new Exception();
-            }
+        if ($url !== false) {
+            $this->url = $url;
         }
 
+        $icon = $this->getIconFromAttributes($attributes);
+
+        if ($icon !== false) {
+            $this->icon = $icon;
+        }
+
+        $priority = $this->getPriorityFromAttributes($attributes);
+
+        if ($priority !== false) {
+            $this->priority = $priority;
+        }
+    }
+
+    public function addLink($title, $attributes = array())
+    {
+        $title = trim($title);
+
+        $url = $this->getUrlFromAttributes($attributes);
+
+        if ($url !== false) {
+            $this->url = $url;
+        }
+
+        $icon = $this->getIconFromAttributes($attributes);
+
+        if ($icon !== false) {
+            $this->icon = $icon;
+        }
+
+        $priority = $this->getPriorityFromAttributes($attributes);
+
+        if ($priority !== false) {
+            $this->priority = $priority;
+        }
+
+        /**
+         * Let's check if menu item already exists.
+         * If it doesn't we'll create it.
+         */
         if (!array_key_exists($title, $this->childMenuItems)) {
-            $this->childMenuItems[$title] = new MenuItem($this->menuBuilder, $title, $url, $htmlOptions);
+            $this->childMenuItems[$title] = new MenuItem($this->menuBuilder, $title, $attributes);
         } else {
             /**
              * @todo Change to custom exception class
@@ -51,30 +79,38 @@ class MenuItem implements MenuItemInterface
             throw new Exception();
         }
 
+        /**
+         * Priority attached to this link.
+         * We need to sort the menu based on priority.
+         */
+        if ($priority > 0) {
+            $this->sortChildMenus();
+        }
+
         return $this;
     }
 
-    public function addLinkIf($title, $url, $condition, $htmlOptions = array())
+    public function addLinkIf($title, $condition, $attributes = array())
     {
-        return $this->isConditionTrue($condition) ? $this->addLink($title, $url, $htmlOptions) : $this;
+        return $this->isConditionTrue($condition) ? $this->addLink($title, $attributes) : $this;
     }
 
-    public function addSubMenu($title, $url, MenuItemInterface $subMenu, $htmlOptions = array())
+    public function addSubMenu($title, MenuItemInterface $subMenu, $attributes = array())
     {
-        $this->addLink($title, $url, $htmlOptions);
+        $this->addLink($title, $attributes);
         $this->childMenuItems[$title]->childMenuItems = $subMenu->childMenuItems;
     }
 
-    public function addSubMenuIf($title, $url, MenuItemInterface $subMenu, $condition, $htmlOptions = array())
+    public function addSubMenuIf($title, MenuItemInterface $subMenu, $condition, $attributes = array())
     {
-        return $this->isConditionTrue($condition) ? $this->addSubMenu($title, $url, $subMenu, $htmlOptions) : $this;
+        return $this->isConditionTrue($condition) ? $this->addSubMenu($title, $subMenu, $attributes) : $this;
     }
 
     private function isConditionTrue($condition)
     {
         if (is_bool($condition)) {
             return ($condition === true);
-        } else if (is_callable($condition)) {
+        } elseif (is_callable($condition)) {
             return call_user_func($condition);
         } else {
             /**
@@ -120,64 +156,39 @@ class MenuItem implements MenuItemInterface
         throw new Exception('Provided namespace, '.$namespace.', does not exists!');
     }
 
-    public function render()
+    public function getMenuItems()
     {
-        return $this->recursiveRender($this->menuBuilder->getCurrentUrl(), true);
+        return $this->childMenuItems;
     }
 
-    protected function recursiveRender($currentUrl, $isRoot = false)
+    public function getPriority()
     {
-        $html = '';
+        return $this->priority;
+    }
 
-        if ($isRoot) {
-            $html = '<ul class="nav">';
+    public function getTitle()
+    {
+        return $this->title;
+    }
 
-            foreach ($this->childMenuItems as $childMenuItem) {
-                $html .= $childMenuItem->recursiveRender($currentUrl);
-            }
+    public function getUrl()
+    {
+        return $this->url;
+    }
 
-            $html .= '</ul>';
-        } else {
-            $html .= '<li class="';
-            $subMenuHtml = '';
+    public function getIcon()
+    {
+        return $this->icon;
+    }
 
-            $icon = '';
-            if (array_key_exists('icon', $this->htmlOptions)) {
-                $icon = preg_replace('/\s+/', '', $this->htmlOptions['icon']);
-                $icon = filter_var($icon, FILTER_SANITIZE_STRING);
-                $icon = '<i class="icon-'.$icon.'">&nbsp;</i>';
-            }
+    public function isActive()
+    {
+        return $this->menuBuilder->getCurrentUrl() === $this->getUrl();
+    }
 
-            if (!empty($this->childMenuItems)) {
-                $html .= 'dropdown-submenu';
-
-                $subMenuHtml .= ' class="dropdown-toggle" data-toggle="dropdown">';
-                $subMenuHtml .= $icon.$this->title.'</a>';
-                $subMenuHtml .= '<ul class="dropdown-menu animated fadeIn">';
-
-                foreach ($this->childMenuItems as $childMenuItem) {
-
-                    $subMenuHtml .= $childMenuItem->recursiveRender($currentUrl);
-                }
-
-                $subMenuHtml .= '</ul>';
-            } else {
-                $subMenuHtml .= '>'.$icon.$this->title.'</a>';
-            }
-
-            if ($this->url == $currentUrl) {
-                $html .= ' active';
-            }
-
-            $html .= '"><a href="'.$this->url.'"';
-
-
-            $html .= $subMenuHtml;
-
-            $html .= '</li>';
-        }
-
-        return $html;
+    public function render(MenuRendererInterface $menuRenderer)
+    {
+        return $menuRenderer->render($this, true);
     }
 
     public function toArray()
@@ -191,6 +202,7 @@ class MenuItem implements MenuItemInterface
         $array = [
             'title' => $this->title,
             'url'   => $this->url,
+            'icon'  => $this->icon,
             'childMenuItems' => $childMenuItems
         ];
 
@@ -204,6 +216,71 @@ class MenuItem implements MenuItemInterface
 
     public function __toString()
     {
-        return $this->render();
+        return $this->render($this->menuBuilder->getDefaultRenderer());
+    }
+
+    private function getIconFromAttributes(array $attributes)
+    {
+        if (array_key_exists('icon', $attributes)) {
+            /**
+             * We only want the postfix identifier for this icon.
+             * @todo Does w3c specify any formats for HTML class identifiers?
+             *
+             * E.g. <i class="icon-<icon_postfix>"></i>
+             *      $attributes['icon'] = <icon_postfix>
+             */
+            return preg_replace('/\s+/', '', $attributes['icon']);
+        } else {
+            return false;
+        }
+    }
+
+    private function getUrlFromAttributes(array $attributes)
+    {
+        if (array_key_exists('url', $attributes)) {
+            $url = filter_var($attributes['url'], FILTER_SANITIZE_URL);
+
+            if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                /**
+                 * @todo Change to custom exception class
+                 */
+                throw new Exception();
+            } else {
+                return $url;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private function getPriorityFromAttributes(array $attributes)
+    {
+        if (array_key_exists('priority', $attributes)) {
+            $priority = $attributes['priority'];
+
+            if (!is_int($priority) || $priority < 0) {
+                /**
+                 * @todo Change to custom exception class
+                 */
+                throw new Exception();
+            } else {
+                return $priority;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private function sortChildMenus()
+    {
+        uasort($this->childMenuItems, function (MenuItemInterface $a, MenuItemInterface $b) {
+
+            var_dump($a->getPriority().' && '.$b->getPriority());
+            if ($a->getPriority() == $b->getPriority()) {
+                return 0;
+            }
+
+            return ($a->getPriority() < $b->getPriority()) ? -1 : 1;
+        });
     }
 }

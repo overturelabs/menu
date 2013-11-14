@@ -34,9 +34,15 @@ class MenuServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+
         $this->app['menu'] = $this->app->share(function($app)
         {
-            return new MenuBuilder($app['html'], $app['url']);
+            $menuRenderer = $app['config']['menu::renderer'];
+            $menuRenderer = '\\'.ltrim($menuRenderer, '\\');
+            $menuRenderer = new $menuRenderer;
+
+            return new MenuBuilder($app['html'], $app['url'], $menuRenderer);
         });
     }
 
@@ -49,5 +55,4 @@ class MenuServiceProvider extends ServiceProvider
     {
         return array();
     }
-
 }
