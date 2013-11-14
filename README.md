@@ -14,10 +14,9 @@ With Menu builder, you can build and render menus easily.
 
 ## @todo
 
- 1. Add more comments!
- 2. Document the code!
- 3. Add rendering engine for Zurb Foundation!
- 4. Add tests!
+ 1. Add a short tutorial writeup!
+ 2. Add rendering engine for Zurb Foundation!
+ 3. Add tests!
 
 ## Known Bugs
  * Namespace feature is potentially buggy. Do not use.
