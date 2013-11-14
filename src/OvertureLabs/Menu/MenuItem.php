@@ -122,39 +122,39 @@ class MenuItem implements MenuItemInterface
         }
     }
 
-    public function attachSubMenu($namespace, MenuItemInterface $subMenu)
-    {
-        $menuItem = $this->getMenuItem($namespace);
+    // public function attachSubMenu($namespace, MenuItemInterface $subMenu)
+    // {
+    //     $menuItem = $this->getMenuItem($namespace);
 
-        $menuItem->childMenuItems = array_merge($menuItem->childMenuItems, $subMenu->childMenuItems);
+    //     $menuItem->childMenuItems = array_merge($menuItem->childMenuItems, $subMenu->childMenuItems);
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function attachSubMenuIf($namespace, MenuItemInterface $subMenu, $condition)
-    {
-        return $this->isConditionTrue($condition) ? $this->attachSubMenu($namespace, $subMenu) : $this;
-    }
+    // public function attachSubMenuIf($namespace, MenuItemInterface $subMenu, $condition)
+    // {
+    //     return $this->isConditionTrue($condition) ? $this->attachSubMenu($namespace, $subMenu) : $this;
+    // }
 
-    public function getMenuItem($namespace)
-    {
-        $namespace = trim($namespace);
+    // public function getMenuItem($namespace)
+    // {
+    //     $namespace = trim($namespace);
 
-        if (preg_match('/^([^\.]*)(?:\.([^\.]+(?:\.[^\.]+)*))*$/', $namespace, $segments)) {
-            if (array_key_exists($segments[1], $this->childMenuItems)) {
-                if (empty($segments[2])) {
-                    return $this->childMenuItems[$segments[1]];
-                } else {
-                    return $this->childMenuItems[$segments[1]]->getMenuItem($segments[2]);
-                }
-            }
-        }
+    //     if (preg_match('/^([^\.]*)(?:\.([^\.]+(?:\.[^\.]+)*))*$/', $namespace, $segments)) {
+    //         if (array_key_exists($segments[1], $this->childMenuItems)) {
+    //             if (empty($segments[2])) {
+    //                 return $this->childMenuItems[$segments[1]];
+    //             } else {
+    //                 return $this->childMenuItems[$segments[1]]->getMenuItem($segments[2]);
+    //             }
+    //         }
+    //     }
 
-        /**
-         * @todo Change to custom exception class
-         */
-        throw new Exception('Provided namespace, '.$namespace.', does not exists!');
-    }
+    //     /**
+    //      * @todo Change to custom exception class
+    //      */
+    //     throw new Exception('Provided namespace, '.$namespace.', does not exists!');
+    // }
 
     public function getMenuItems()
     {

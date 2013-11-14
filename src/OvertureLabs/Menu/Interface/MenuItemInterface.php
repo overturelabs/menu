@@ -52,7 +52,7 @@ interface MenuItemInterface
      * @param  MenuItemInterface $subMenu
      * @return [type]
      */
-    public function attachSubMenu($namespace, MenuItemInterface $subMenu);
+    // public function attachSubMenu($namespace, MenuItemInterface $subMenu);
 
     /**
      * [attachSubMenuIf description]
@@ -61,14 +61,14 @@ interface MenuItemInterface
      * @param  [type]            $condition
      * @return [type]
      */
-    public function attachSubMenuIf($namespace, MenuItemInterface $subMenu, $condition);
+    // public function attachSubMenuIf($namespace, MenuItemInterface $subMenu, $condition);
 
     /**
      * [getMenuItem description]
      * @param  [type] $namespace
      * @return [type]
      */
-    public function getMenuItem($namespace);
+    // public function getMenuItem($namespace);
 
     /**
      * Get all the menu items in this menu item node.
