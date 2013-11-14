@@ -5,8 +5,6 @@ Ever wanted a more elegant way of handling menus?
 
 With Menu builder, you can build and render menus easily.
 
-This package is still under development.
-
 ## Features
 
  * Priority based menu items!
@@ -21,7 +19,5 @@ This package is still under development.
  3. Add rendering engine for Zurb Foundation!
  4. Add tests!
 
-## Bugs
- * Namespace feature is buggy. Do not use.
-
-What are you waiting for? Try it tod... oh that's right; It's not done yet. My apologies.
+## Known Bugs
+ * Namespace feature is potentially buggy. Do not use.

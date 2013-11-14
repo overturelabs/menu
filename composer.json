@@ -1,6 +1,6 @@
 {
     "name": "overturelabs/menu",
-    "description": "Menu manager for Laravel 4",
+    "description": "Menu builder for Laravel 4",
     "keywords": ["laravel", "menu"],
     "license": "MIT",
     "authors": [
