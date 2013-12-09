@@ -99,6 +99,8 @@ class MenuItem implements MenuItemInterface
     {
         $this->addLink($title, $attributes);
         $this->childMenuItems[$title]->childMenuItems = $subMenu->childMenuItems;
+        
+        return $this;
     }
 
     public function addSubMenuIf($title, MenuItemInterface $subMenu, $condition, $attributes = array())
